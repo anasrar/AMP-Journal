@@ -49,11 +49,23 @@
     </ul>
 
     <script>
-        window.parent.postMessage({
-            sentinel: 'amp',
-            type: 'embed-size',
-            height: document.body.scrollHeight
-        }, '*');
+        window.addEventListener('message', function (event) {
+            if (event.data) {
+                var msg;
+                try {
+                    msg = JSON.parse(event.data);
+                } catch (err) { }
+                if (!msg)
+                    return false;
+                if (msg.name === 'resize') {
+                    window.parent.postMessage({
+                        sentinel: 'amp',
+                        type: 'embed-size',
+                        height: msg.data.height
+                    }, '*');
+                }
+            }
+        }, false);
 
         var Data = {
             post: []
